@@ -1,0 +1,62 @@
+方便代码生成器的编写，比如：
+
+实际代码：
+        private string CreateGetModelByWhere()
+        {
+            return string.Format(@"        public {2} GetModel(string where)
+        {{
+            string sqlText = {0}select * from {1} {0};
+            if (!string.IsNullOrWhiteSpace(where))
+            {{
+                sqlText += {0}where {0} + where;
+            }}
+            else
+            {{
+                throw new Exception({0}where 不能为null或空字符串{0});
+            }}
+            DataTable table = SQLHelper.ExecuteDataTable(sqlText);
+            if (table.Rows.Count <= 0) {{ return null; }}
+            else
+            {{
+                return DataRowToModel(table.Rows[0]);
+            }}
+        }}", "\"", TableName, ProcessedTableName);
+        }
+最初代码：
+        public Power GetModel(string where)
+        {
+            string sqlText = "select * from T_Powers ";
+            if (!string.IsNullOrWhiteSpace(where))
+            {
+                sqlText += "where " + where;
+            }
+            else
+            {
+                throw new Exception("where 不能为null或空字符串");
+            }
+            DataTable table = SQLHelper.ExecuteDataTable(sqlText);
+            if (table.Rows.Count <= 0) { return null; }
+            else
+            {
+                return DataRowToModel(table.Rows[0]);
+            }
+        }
+转换后代码：
+@"        public Power GetModel(string where)
+        {{
+            string sqlText = {0}select * from T_Powers {0};
+            if (!string.IsNullOrWhiteSpace(where))
+            {{
+                sqlText += {0}where {0} + where;
+            }}
+            else
+            {{
+                throw new Exception({0}where 不能为null或空字符串{0});
+            }}
+            DataTable table = SQLHelper.ExecuteDataTable(sqlText);
+            if (table.Rows.Count <= 0) {{ return null; }}
+            else
+            {{
+                return DataRowToModel(table.Rows[0]);
+            }}
+        }}","\""
